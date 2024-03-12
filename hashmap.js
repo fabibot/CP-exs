@@ -255,4 +255,4 @@ hashMap1.set(hash('Lolra'), 'Lolra');
 // hashMap1.clear();
 // console.log(hashMap1.keys());
 // console.log(hashMap1.values());
-console.log(hashMap1.entries());
+// console.log(hashMap1.entries());
