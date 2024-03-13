@@ -268,10 +268,10 @@ for(let i = 0; i < centArray.length; i++){
     centArray[i] = n;
 }
 let centTree = new Tree(centArray, buildTree(centArray));
-console.log(centTree.rebalance());
-console.log(centTree.isBalanced());
-console.log(centTree.levelOrder());
-console.log(centTree.inOrder());
-console.log(centTree.preOrder());
-console.log(centTree.postOrder());
-prettyPrint(centTree.root);
+// console.log(centTree.rebalance());
+// console.log(centTree.isBalanced());
+// console.log(centTree.levelOrder());
+// console.log(centTree.inOrder());
+// console.log(centTree.preOrder());
+// console.log(centTree.postOrder());
+// prettyPrint(centTree.root);
