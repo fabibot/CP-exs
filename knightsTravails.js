@@ -3,6 +3,7 @@
 
 function Node(data){
     this.data = data;
+    this.parent = null;
     this.child = null;
 }
 
@@ -12,26 +13,48 @@ function knightMoves(start, end){
     let possiblePlaces = getPossibleMouvement(start);
     firstNode.child = createNodes(possiblePlaces);
     let possibleEnds = getPossibleArrivals(end);
-    let finalPath = findPaths(firstNode, possibleEnds);
+    let totalPaths = findPaths(firstNode, possibleEnds);
+    let finalPath = [];
+    // finalPath.push(start);
+    finalPath.push(findShortestPath(totalPaths));
+    // finalPath.push(end);
     console.log(finalPath);
-    console.log(firstNode);
-   
+}   
+
+function findShortestPath(nodeFound){
+    let bestCount = 100;
+    let finalPath;
+    for(let node of nodeFound){
+        let currentNode = node;
+        let nodeCount = 0;
+        let path = [];
+        while(currentNode != null){
+            path.push(currentNode.data);
+            currentNode = currentNode.parent;
+            nodeCount++;
+        }
+        if(nodeCount < bestCount){
+            bestCount = nodeCount;
+            finalPath = path;
+        }
+    }
+    return finalPath;
+
+}
 
 function findPaths(node, endsArray, resultArray = [], visitedPts = []){
 
     for(let element of node.child){
-        if(element.data != null){
-            for(let position of endsArray){
-                if(position[0] == element.data[0] && position[1] == element.data[1]){
-                    resultArray.push(position);
-                    console.log("chemin trouvée")
-                    if(resultArray.length < 4){
-                        return resultArray;
-                    } else {
-                        return 0;
-                    }
+        for(let position of endsArray){
+            if(position[0] == element.data[0] && position[1] == element.data[1]){
+                console.log("chemin trouvée")
+                element.parent = node;
+                resultArray.push(element);
+                if(resultArray.length < 4){
+                    return resultArray;
+                } else {
+                    return 0;
                 }
-
             }
         }
     }
@@ -44,6 +67,7 @@ function findPaths(node, endsArray, resultArray = [], visitedPts = []){
             let pathArray = getPossibleMouvement(path.data);
             let sortedPathArray = sortPath(pathArray, visitedPts);
             path.child = createNodes(sortedPathArray);
+            path.parent = node;
             let x = findPaths(path, endsArray, resultArray, visitedPts);
             if(x == 0){
                 return resultArray;
@@ -51,10 +75,7 @@ function findPaths(node, endsArray, resultArray = [], visitedPts = []){
             }
         }
     }
-    return resultArray;
-    //si 2 chemin arrive au même chemin, suprimer le plus long des deux
-    //trouver comment remplir le tableau;   
-}
+    return resultArray;  
 }
 
 function sortPath(array1, array2){
@@ -77,7 +98,6 @@ function getPossibleMouvement(start){
         if(possibleDirections[i][0] < 0 || possibleDirections[i][0] > 7 || possibleDirections[i][1] < 0 || possibleDirections[i][1] > 7 ){
             possibleDirections[i] = null;
         }
-        // console.log(possibleDirections[i]);
     }
     let possibleDirectionsFiltred = possibleDirections.filter((element) => element != null);
     return possibleDirectionsFiltred;
@@ -108,4 +128,6 @@ function createNodes(array){
     return tab;
 }
 
-knightMoves([1, 6], [4, 4]); 
+// knightMoves([1, 6], [4, 4]); 
+// knightMoves([6, 3], [0, 0] ); 
+knightMoves([0, 7], [7, 7]); 
