@@ -1,8 +1,5 @@
-/*objectif: 
-créer une function qui prend en entré une position de départ,
-et une position d'arriver et qui retourne le chemin 
-le plus court possible */
 
+// const { result } = require("lodash");
 
 function Node(data){
     this.data = data;
@@ -10,44 +7,62 @@ function Node(data){
 }
 
 function knightMoves(start, end){
+    //gérer la situation où il faut qu'1 pas pour aller de start à end!
     let firstNode = new Node(start);
     let possiblePlaces = getPossibleMouvement(start);
     firstNode.child = createNodes(possiblePlaces);
     let possibleEnds = getPossibleArrivals(end);
-
     let finalPath = findPaths(firstNode, possibleEnds);
     console.log(finalPath);
+    console.log(firstNode);
    
 
-function findPaths(node, endsArray, resultArray = []){
+function findPaths(node, endsArray, resultArray = [], visitedPts = []){
+
     for(let element of node.child){
         if(element.data != null){
-            let index = 0;
             for(let position of endsArray){
-                if(position){
-                    if(position[0] == element.data[0] && position[1] == element.data[1]){
-                        console.log(element);
-                        console.log("resultat trouvé");
-                        resultArray.push(element.data);
-                        return element;
+                if(position[0] == element.data[0] && position[1] == element.data[1]){
+                    resultArray.push(position);
+                    console.log("chemin trouvée")
+                    if(resultArray.length < 4){
+                        return resultArray;
+                    } else {
+                        return 0;
                     }
                 }
-                index++;
+
             }
         }
-        // console.log(element.data)
     }
+    if(!visitedPts.find((element) => element == node.data)){
+        visitedPts.push(node.data);
+    }
+
     for(let path of node.child){
         if(path.data){
             let pathArray = getPossibleMouvement(path.data);
-            path.child = createNodes(pathArray);
-            // console.log(path)
-            findPaths(path, endsArray, resultArray);
+            let sortedPathArray = sortPath(pathArray, visitedPts);
+            path.child = createNodes(sortedPathArray);
+            let x = findPaths(path, endsArray, resultArray, visitedPts);
+            if(x == 0){
+                return resultArray;
+
+            }
         }
     }
     return resultArray;
-    //trouver comment remplir le tableau;
+    //si 2 chemin arrive au même chemin, suprimer le plus long des deux
+    //trouver comment remplir le tableau;   
 }
+}
+
+function sortPath(array1, array2){
+    return array1.filter(subarray1 => {
+        return !array2.some(subarray2 => {
+            return subarray1.every((value, index) => value === subarray2[index]);
+        });
+    });
 }
 
 function getPossibleMouvement(start){
@@ -64,41 +79,9 @@ function getPossibleMouvement(start){
         }
         // console.log(possibleDirections[i]);
     }
-    return possibleDirections;
+    let possibleDirectionsFiltred = possibleDirections.filter((element) => element != null);
+    return possibleDirectionsFiltred;
 }
-// function getPossibleArrivals(start){
-    // let possibleDirections = [];
-    // let positionX = start[0];
-    // let positionY = start[1];
-    // if(positionX - 2 > -1){
-    //     if(positionY - 1 > -1){
-    //         possibleDirections.push([positionX - 2, positionY - 1]);
-    //     } if(positionY + 1 < 8){
-    //         possibleDirections.push([positionX - 2, positionY + 1]);
-    //     }
-    // } if(positionX + 2 < 8){
-    //     if(positionY - 1 > -1){
-    //         possibleDirections.push([positionX + 2, positionY - 1]);
-    //     } if(positionY + 1 < 8){
-    //         possibleDirections.push([positionX + 2, positionY + 1]);
-    //     }
-    // }
-    // if(positionY - 2 > -1){
-    //     if(positionX - 1 > -1){
-    //         possibleDirections.push([positionY - 2, positionX - 1]);
-    //     } if(positionX + 1 < 8){
-    //         possibleDirections.push([positionY - 2, positionX + 1]);
-    //     }
-    // } if(positionY + 2 < 8){
-    //     if(positionX - 1 > -1){
-    //         possibleDirections.push([positionY + 2, positionX - 1]);
-    //     } if(positionX + 1 < 8){
-    //         possibleDirections.push([positionY + 2, positionX + 1]);
-    //     }
-    // }
-    // return possibleDirections;
-// }
-
 function getPossibleArrivals(end){
     let possibleGoals = [];
     let calculs1 = [-1, -1, 1, 1, -2, -2, 2, 2];
@@ -113,7 +96,8 @@ function getPossibleArrivals(end){
         }
         // console.log(possibleGoals[i]);
     }
-    return possibleGoals;
+    let possibleGoalsFiltred = possibleGoals.filter((element) => element != null);
+    return possibleGoalsFiltred;
 }
 function createNodes(array){
     let tab = [];
@@ -124,4 +108,4 @@ function createNodes(array){
     return tab;
 }
 
-knightMoves([1, 6], [4, 4] ); // [3, 2]
+knightMoves([1, 6], [4, 4]); 
