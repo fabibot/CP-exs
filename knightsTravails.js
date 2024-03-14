@@ -1,4 +1,4 @@
-
+//ma méthode a été de calculer tous les chemins possibles pour atteindre l'objectif, puis de trouver le chemin le plus court parmis les résultats trouvés...
 // const { result } = require("lodash");
 
 function Node(data){
@@ -8,21 +8,22 @@ function Node(data){
 }
 
 function knightMoves(start, end){
-    //gérer la situation où il faut qu'1 pas pour aller de start à end!
     let firstNode = new Node(start);
     let possiblePlaces = getPossibleMouvement(start);
-    firstNode.child = createNodes(possiblePlaces);
-    let possibleEnds = getPossibleArrivals(end);
-    let totalPaths = findPaths(firstNode, possibleEnds);
+    let possibleEnds = getPossibleArrivals(end);    
     let finalPath = [];
-    // finalPath.push(start);
-    finalPath.push(findShortestPath(totalPaths));
-    // finalPath.push(end);
-    console.log(finalPath);
+    if(possiblePlaces.find((element) => element[0] == end[0] && element[1] == end[1])){
+        printResult(start, end)
+    } else{
+        firstNode.child = createNodes(possiblePlaces);
+        let totalPaths = findPaths(firstNode, possibleEnds);
+        finalPath.push(findShortestPath(totalPaths));
+        printResult(start, end, finalPath[0]);
+    }
 }   
 
 function findShortestPath(nodeFound){
-    let bestCount = 100;
+    let bestCount = 20;
     let finalPath;
     for(let node of nodeFound){
         let currentNode = node;
@@ -39,18 +40,16 @@ function findShortestPath(nodeFound){
         }
     }
     return finalPath;
-
 }
 
 function findPaths(node, endsArray, resultArray = [], visitedPts = []){
-
     for(let element of node.child){
         for(let position of endsArray){
             if(position[0] == element.data[0] && position[1] == element.data[1]){
-                console.log("chemin trouvée")
+                // console.log("chemin trouvée")
                 element.parent = node;
                 resultArray.push(element);
-                if(resultArray.length < 4){
+                if(resultArray.length < 6){
                     return resultArray;
                 } else {
                     return 0;
@@ -128,6 +127,25 @@ function createNodes(array){
     return tab;
 }
 
-// knightMoves([1, 6], [4, 4]); 
-// knightMoves([6, 3], [0, 0] ); 
-knightMoves([0, 7], [7, 7]); 
+function printResult(start, end, path){
+    let mouveCount = 1;
+    if(path){
+        mouveCount += path.length;
+    }
+    console.log(`KnightMoves : ${start} ---> ${end}`);
+    console.log(`You can make it in ${mouveCount} moves ! Here's your path :`)
+    if(!path){
+        console.log(start);
+        console.log(end);
+    } else {
+        for(let i = path.length - 1; i > -1; i--){
+            console.log(path[i])
+        }
+        console.log(end)
+    }
+    
+}
+
+
+knightMoves([0, 7], [4, 6]); 
+
